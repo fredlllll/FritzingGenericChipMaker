@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class SVGSquare : SVGElement
+    public class SVGRect : SVGElement
     {
         public double Left { get; set; }
         public double Bottom { get; set; }
@@ -17,7 +17,7 @@ namespace FritzingGenericChipMaker
         public Color StrokeColor { get; set; }
         public double StrokeWidth { get; set; }
 
-        public override string Emit(string id)
+        public override string Emit()
         {
             string x = Format(Left);
             string y = Format(Bottom);
@@ -27,7 +27,7 @@ namespace FritzingGenericChipMaker
             string strokeColor = Format(StrokeColor);
             string strokeWidth = Format(StrokeWidth);
             return string.Format("<rect x=\"{0}\" y=\"{1}\" width=\"{2}\" height=\"{3}\" fill=\"{4}\" stroke=\"rgb({5})\" stroke-width=\"{6}\" id=\"{7}\"/>",
-                x, y, w, h, fillColor, strokeColor, strokeWidth, id);
+                x, y, w, h, fillColor, strokeColor, strokeWidth, ID);
         }
     }
 }

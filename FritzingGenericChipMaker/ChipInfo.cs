@@ -23,7 +23,52 @@ namespace FritzingGenericChipMaker
         public abstract double CalculateSketchX_MM();
         public abstract double CalculateSketchY_MM();
 
-        public abstract List<SVGElement> getSVGElements();
+        public abstract Dictionary<Layer, List<SVGElement>> getSVGElements();
+
+        public string GetPCBSVG()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<?xml version='1.0' encoding='UTF-8'?>");
+            double w = CalculateSketchX_MM();
+            double h = CalculateSketchY_MM();
+            sb.AppendLine("<svg xmlns='http://www.w3.org/2000/svg' version='1.2' x='0' y='0' id='svg2' width='" + SVGElement.Format(w) + "mm' height='" + SVGElement.Format(h) + "mm' viewBox='0 0 " + SVGElement.Format(w) + " " + SVGElement.Format(h) + "'>");
+
+            var elements = getSVGElements();
+
+            foreach(var e in elements)
+            {
+                int groups = 1;
+                switch(e.Key)
+                {
+                    case Layer.Silkscreen:
+                        sb.AppendLine("<g id='silkscreen'>");
+                        break;
+                    case Layer.Copper0:
+                        sb.AppendLine("<g id='copper0'>");
+                        break;
+                    case Layer.Copper1:
+                        sb.AppendLine("<g id='copper1'>");
+                        break;
+                    case Layer.BothCopper:
+                        groups = 2;
+                        sb.AppendLine("<g id='copper0'><g id='copper1'>");
+                        break;
+                }
+                foreach(var se in e.Value)
+                {
+                    sb.AppendLine(se.Emit());
+                }
+
+                for(int i = 0; i < groups; i++)
+                {
+                    sb.AppendLine("</g>");
+                }
+            }
+
+            sb.AppendLine("</svg>");
+
+            return sb.ToString();
+        }
 
         /*public bool ThermalPad { get; set; }
         public float ThermalPadSize { get; set; }
@@ -41,62 +86,6 @@ namespace FritzingGenericChipMaker
         protected void RaisePropertyChangedEvent(object sender, PropertyChangedEventArgs args)
         {
             PropertyChanged?.Invoke(sender, args);
-        }
-    }
-
-    public class ChipInfoSIP : ChipInfo
-    {
-        public Measurement PinSpacing { get; set; } = new Measurement(0.1, true);
-        public Measurement HoleOuterDiam { get; set; } = new Measurement(0.8);
-
-        public ChipInfoSIP()
-        {
-            PinSpacing.PropertyChanged += RaisePropertyChangedEvent;
-            HoleOuterDiam.PropertyChanged += RaisePropertyChangedEvent;
-        }
-
-        public override double CalculateSketchX_MM()
-        {
-            return PinSpacing.Millimeters*(PinCount+1);
-        }
-
-        public override double CalculateSketchY_MM()
-        {
-            return HoleOuterDiam.Millimeters;
-        }
-
-        public override List<SVGElement> getSVGElements()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ChipInfoDIP : ChipInfo
-    {
-        public Measurement PinSpacingX { get; set; } = new Measurement(0.1, true);
-        public Measurement PinSpacingY { get; set; } = new Measurement(15);
-        public Measurement HoleOuterDiam { get; set; } = new Measurement(0.8);
-
-        public ChipInfoDIP()
-        {
-            PinSpacingX.PropertyChanged += RaisePropertyChangedEvent;
-            PinSpacingY.PropertyChanged += RaisePropertyChangedEvent;
-            HoleOuterDiam.PropertyChanged += RaisePropertyChangedEvent;
-        }
-
-        public override double CalculateSketchX_MM()
-        {
-            return PinSpacingX.Millimeters * (PinCount/2+1);
-        }
-
-        public override double CalculateSketchY_MM()
-        {
-            return PinSpacingY.Millimeters + HoleOuterDiam.Millimeters;
-        }
-
-        public override List<SVGElement> getSVGElements()
-        {
-            throw new NotImplementedException();
         }
     }
 }

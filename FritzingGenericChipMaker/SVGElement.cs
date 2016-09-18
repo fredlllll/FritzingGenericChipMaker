@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    [Flags]
     public enum Layer
     {
-        None = 0,
-        Silkscreen = 1,
-        Copper0 = 2,
-        Copper1 = 4,
-        BothCopper = Copper0|Copper1,
+        None,
+        Silkscreen,
+        Copper0,
+        Copper1,
+        BothCopper,
     }
 
     public abstract class SVGElement
     {
         public Layer Layer { get; set; }
+        public string ID { get; set; }
 
-        public const string doubleFormat = "#.#################################";
+        public const string doubleFormat = "0.#################################";
 
         public static string Format(Color c)
         {
@@ -33,6 +33,6 @@ namespace FritzingGenericChipMaker
             return d.ToString(doubleFormat, System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        public abstract string Emit(string id);
+        public abstract string Emit();
     }
 }
