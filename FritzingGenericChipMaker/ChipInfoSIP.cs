@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,24 +9,27 @@ namespace FritzingGenericChipMaker
 {
     public class ChipInfoSIP : ChipInfo
     {
+        [TypeConverter(typeof(ExpandableObjectConverter))]
         public Measurement PinSpacing { get; set; } = new Measurement(0.1, true);
-        public Measurement HoleOuterDiam { get; set; } = new Measurement(2);
-        public Measurement HoleStrokeWidth { get; set; } = new Measurement(0.8);
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public Measurement HoleDiameter { get; set; } = new Measurement(0.9);
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public Measurement RingWidth { get; set; } = new Measurement(0.5);
 
         public ChipInfoSIP()
         {
             PinSpacing.PropertyChanged += RaisePropertyChangedEvent;
-            HoleOuterDiam.PropertyChanged += RaisePropertyChangedEvent;
+            HoleDiameter.PropertyChanged += RaisePropertyChangedEvent;
         }
 
         public override double CalculateSketchX_MM()
         {
-            return PinSpacing.Millimeters * (PinCount + 1);
+            return PinSpacing.Millimeters * (PinCount - 1) + HoleDiameter.Millimeters + RingWidth.Millimeters*2;
         }
 
         public override double CalculateSketchY_MM()
         {
-            return HoleOuterDiam.Millimeters+ HoleStrokeWidth.Millimeters/2;
+            return HoleDiameter.Millimeters + RingWidth.Millimeters * 2;
         }
 
         public override Dictionary<Layer, List<SVGElement>> getSVGElements()
@@ -34,22 +38,6 @@ namespace FritzingGenericChipMaker
 
             double w = CalculateSketchX_MM();
             double h = CalculateSketchY_MM();
-
-            //copperlayers
-            List<SVGElement> copper = new List<SVGElement>();
-            dict[Layer.BothCopper] = copper;
-
-            double x = PinSpacing.Millimeters / 2;
-            double y = h / 2;
-            for(int i = 0; i < PinCount; i++, x+=PinSpacing.Millimeters)
-            {
-                SVGCircle circle = new SVGCircle();
-                circle.CenterX = x;
-                circle.CenterY = y;
-                circle.Diameter = HoleOuterDiam.Millimeters;
-                circle.ID = "connector-pad-"+i;
-                copper.Add(circle);
-            }
 
             //silkscreen
             List<SVGElement> silkscreen = new List<SVGElement>();
@@ -80,6 +68,25 @@ namespace FritzingGenericChipMaker
             line.X2 = line.X1;
             line.Y2 = h - hw;
             silkscreen.Add(line);
+
+            //copperlayers
+            List<SVGElement> copper = new List<SVGElement>();
+            dict[Layer.BothCopper] = copper;
+
+            double d = HoleDiameter.Millimeters + RingWidth.Millimeters;
+            double x = (d + RingWidth.Millimeters) / 2; //so we get outer diameter we add another ringwidth
+            double y = h / 2;
+            double strokeWidth = RingWidth.Millimeters;
+            for(int i = 0; i < PinCount; i++, x += PinSpacing.Millimeters)
+            {
+                SVGCircle circle = new SVGCircle();
+                circle.CenterX = x;
+                circle.CenterY = y;
+                circle.Diameter = d;
+                circle.StrokeWidth = strokeWidth;
+                circle.ID = "connector-pad-" + i;
+                copper.Add(circle);
+            }
 
             return dict;
         }

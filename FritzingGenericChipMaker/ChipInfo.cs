@@ -17,7 +17,7 @@ namespace FritzingGenericChipMaker
 
     public abstract class ChipInfo : INotifyPropertyChanged
     {
-        public int PinCount { get; set; }
+        public int PinCount { get; set; } = 8;
         public string Label { get; set; }
 
         public abstract double CalculateSketchX_MM();
