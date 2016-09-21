@@ -1,200 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class Measurement : INotifyPropertyChanged, ICustomTypeDescriptor
+    [TypeConverter(typeof(MeasurementConverter))]
+    public class Measurement
     {
         double mm;
-        public event PropertyChangedEventHandler PropertyChanged;
+        [Browsable(false)]
+        public bool IsMM
+        {
+            get; private set;
+        }
 
         public double Inches
         {
             get { return mm / 25.4; }
-            set { mm = value * 25.4; Changed(); }
+            set { mm = value * 25.4; IsMM = false; }
         }
         public double Millimeters
         {
-            get
-            {
-                return mm;
-            }
-            set
-            {
-                mm = value;
-                Changed();
-            }
+            get { return mm; }
+            set { mm = value; IsMM = true; }
         }
 
-        void Changed()
+        public Measurement(double value = 0, bool ismm = true)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Inches"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Millimeters"));
-        }
-
-        public Measurement(double value, bool inches = false)
-        {
-            if(inches)
-            {
-                Inches = value;
-            }
-            else
+            if(ismm)
             {
                 Millimeters = value;
             }
+            else
+            {
+                Inches = value;
+            }
         }
 
-        public String GetClassName()
+        public override string ToString()
         {
-            return "Measurement";//            TypeDescriptor.GetClassName(this, true);
-        }
-
-        public AttributeCollection GetAttributes()
-        {
-            return TypeDescriptor.GetAttributes(this, true);
-        }
-
-        public String GetComponentName()
-        {
-            return "Measurement";
-            //return TypeDescriptor.GetComponentName(this, true);
-        }
-
-        public TypeConverter GetConverter()
-        {
-            return TypeDescriptor.GetConverter(this, true);
-        }
-
-        public EventDescriptor GetDefaultEvent()
-        {
-            return TypeDescriptor.GetDefaultEvent(this, true);
-        }
-
-        public PropertyDescriptor GetDefaultProperty()
-        {
-            return TypeDescriptor.GetDefaultProperty(this, true);
-        }
-
-        public object GetEditor(Type editorBaseType)
-        {
-            return TypeDescriptor.GetEditor(this, editorBaseType, true);
-        }
-
-        public EventDescriptorCollection GetEvents(Attribute[] attributes)
-        {
-            return TypeDescriptor.GetEvents(this, attributes, true);
-        }
-
-        public EventDescriptorCollection GetEvents()
-        {
-            return TypeDescriptor.GetEvents(this, true);
-        }
-
-        public object GetPropertyOwner(PropertyDescriptor pd)
-        {
-            return this;
-        }
-
-        public PropertyDescriptorCollection GetProperties()
-        {
-            var pdc = new PropertyDescriptorCollection(null);
-            PropertyDescriptor pd = new MeasurementPropertyDescriptor(this, "mm");
-            pdc.Add(pd);
-            pd = new MeasurementPropertyDescriptor(this, "inches");
-            pdc.Add(pd);
-            return pdc;
-        }
-
-        public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
-        {
-            return GetProperties();
+            if(IsMM)
+            {
+                return Millimeters.ToString(SVGElement.doubleFormat) + "mm";
+            }
+            else
+            {
+                return Inches.ToString(SVGElement.doubleFormat) + "in";
+            }
         }
     }
 
-    public class MeasurementPropertyDescriptor : PropertyDescriptor
+    public class MeasurementConverter : TypeConverter
     {
-        private Measurement m;
-
-        public MeasurementPropertyDescriptor(Measurement m, string id) : base(id, null)
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            this.m = m;
-            ComponentType = m.GetType();
+            return typeof(string) == destinationType;
         }
 
-        public override string DisplayName
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            get
+            if(destinationType == typeof(string))
             {
-                if(Name == "mm")
+                Measurement m = value as Measurement;
+                return m.ToString();
+            }
+            return base.ConvertTo(context, culture, value, destinationType);
+        }
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return typeof(string) == sourceType;
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            string str = value as string;
+            if(str != null)
+            {
+                var tmp = context.Instance;
+                Measurement m = new Measurement();
+                if(str.EndsWith("mm"))
                 {
-                    return "Millimeters";
+                    m.Millimeters = double.Parse(str.Substring(0, str.Length - 2));
                 }
-                else
+                else if(str.EndsWith("in"))
                 {
-                    return "Inches";
+                    m.Inches = double.Parse(str.Substring(0, str.Length - 2));
                 }
+                else //assume mm
+                {
+                    try
+                    {
+                        m.Millimeters = double.Parse(str);
+                    }
+                    catch { }
+                }
+                return m;
             }
-        }
-
-        public override Type ComponentType
-        {
-            get;
-        }
-
-        public override bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public override Type PropertyType
-        {
-            get { return typeof(double); }
-        }
-
-        public override bool CanResetValue(object component)
-        {
-            return true;
-        }
-
-        public override object GetValue(object component)
-        {
-            if(Name == "mm")
-            {
-                return m.Millimeters;
-            }
-            else
-            {
-                return m.Inches;
-            }
-        }
-
-        public override void ResetValue(object component)
-        {
-            m.Millimeters = 0;
-        }
-
-        public override void SetValue(object component, object value)
-        {
-            if(Name == "mm")
-            {
-                m.Millimeters = (double)value;
-            }
-            else
-            {
-                m.Inches = (double)value;
-            }
-        }
-
-        public override bool ShouldSerializeValue(object component)
-        {
-            return true;
+            return base.ConvertFrom(context, culture, value);
         }
     }
 }

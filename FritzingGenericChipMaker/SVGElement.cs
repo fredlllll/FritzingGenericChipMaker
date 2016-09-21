@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public enum Layer
+    public enum BreadboardLayer
+    {
+
+    }
+
+    public enum PCBLayer
     {
         None,
         Silkscreen,
@@ -18,7 +23,6 @@ namespace FritzingGenericChipMaker
 
     public abstract class SVGElement
     {
-        public Layer Layer { get; set; }
         public string ID { get; set; }
 
         public const string doubleFormat = "0.#################################";

@@ -9,39 +9,30 @@ namespace FritzingGenericChipMaker
 {
     public class ChipInfoSIP : ChipInfo
     {
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public Measurement PinSpacing { get; set; } = new Measurement(0.1, true);
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public Measurement HoleDiameter { get; set; } = new Measurement(0.9);
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public Measurement RingWidth { get; set; } = new Measurement(0.5);
-
-        public ChipInfoSIP()
-        {
-            PinSpacing.PropertyChanged += RaisePropertyChangedEvent;
-            HoleDiameter.PropertyChanged += RaisePropertyChangedEvent;
-        }
+        public Measurement PCB_PinSpacing { get; set; } = new Measurement(0.1, false);
+        public Measurement PCB_HoleDiameter { get; set; } = new Measurement(0.9);
+        public Measurement PCB_RingWidth { get; set; } = new Measurement(0.5);
 
         public override double CalculateSketchX_MM()
         {
-            return PinSpacing.Millimeters * (PinCount - 1) + HoleDiameter.Millimeters + RingWidth.Millimeters*2;
+            return PCB_PinSpacing.Millimeters * (PinCount - 1) + PCB_HoleDiameter.Millimeters + PCB_RingWidth.Millimeters*2;
         }
 
         public override double CalculateSketchY_MM()
         {
-            return HoleDiameter.Millimeters + RingWidth.Millimeters * 2;
+            return PCB_HoleDiameter.Millimeters + PCB_RingWidth.Millimeters * 2;
         }
 
-        public override Dictionary<Layer, List<SVGElement>> getSVGElements()
+        public override Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements()
         {
-            Dictionary<Layer, List<SVGElement>> dict = new Dictionary<Layer, List<SVGElement>>();
+            Dictionary<PCBLayer, List<SVGElement>> dict = new Dictionary<PCBLayer, List<SVGElement>>();
 
             double w = CalculateSketchX_MM();
             double h = CalculateSketchY_MM();
 
             //silkscreen
             List<SVGElement> silkscreen = new List<SVGElement>();
-            dict[Layer.Silkscreen] = silkscreen;
+            dict[PCBLayer.Silkscreen] = silkscreen;
 
             SVGLine line = new SVGLine(); //top;
             double hw = line.StrokeWidth / 2;
@@ -71,13 +62,13 @@ namespace FritzingGenericChipMaker
 
             //copperlayers
             List<SVGElement> copper = new List<SVGElement>();
-            dict[Layer.BothCopper] = copper;
+            dict[PCBLayer.BothCopper] = copper;
 
-            double d = HoleDiameter.Millimeters + RingWidth.Millimeters;
-            double x = (d + RingWidth.Millimeters) / 2; //so we get outer diameter we add another ringwidth
+            double d = PCB_HoleDiameter.Millimeters + PCB_RingWidth.Millimeters;
+            double x = (d + PCB_RingWidth.Millimeters) / 2; //so we get outer diameter we add another ringwidth
             double y = h / 2;
-            double strokeWidth = RingWidth.Millimeters;
-            for(int i = 0; i < PinCount; i++, x += PinSpacing.Millimeters)
+            double strokeWidth = PCB_RingWidth.Millimeters;
+            for(int i = 0; i < PinCount; i++, x += PCB_PinSpacing.Millimeters)
             {
                 SVGCircle circle = new SVGCircle();
                 circle.CenterX = x;
@@ -89,6 +80,16 @@ namespace FritzingGenericChipMaker
             }
 
             return dict;
+        }
+
+        public override List<SVGElement> getSchematicSVGElements()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Dictionary<BreadboardLayer, List<SVGElement>> getBreadboardSVGElements()
+        {
+            throw new NotImplementedException();
         }
     }
 }

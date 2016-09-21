@@ -15,7 +15,7 @@ namespace FritzingGenericChipMaker
         QFP//Quad Flat Pack
     }
 
-    public abstract class ChipInfo : INotifyPropertyChanged
+    public abstract class ChipInfo
     {
         public int PinCount { get; set; } = 8;
         public string Label { get; set; }
@@ -23,7 +23,9 @@ namespace FritzingGenericChipMaker
         public abstract double CalculateSketchX_MM();
         public abstract double CalculateSketchY_MM();
 
-        public abstract Dictionary<Layer, List<SVGElement>> getSVGElements();
+        public abstract Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements();
+        public abstract List<SVGElement> getSchematicSVGElements();
+        public abstract Dictionary<BreadboardLayer, List<SVGElement>> getBreadboardSVGElements();
 
         public string GetPCBSVG()
         {
@@ -33,23 +35,23 @@ namespace FritzingGenericChipMaker
             double h = CalculateSketchY_MM();
             sb.AppendLine("<svg xmlns='http://www.w3.org/2000/svg' version='1.2' x='0' y='0' id='svg2' width='" + SVGElement.Format(w) + "mm' height='" + SVGElement.Format(h) + "mm' viewBox='0 0 " + SVGElement.Format(w) + " " + SVGElement.Format(h) + "'>");
 
-            var elements = getSVGElements();
+            var elements = getPCBSVGElements();
 
             foreach(var e in elements)
             {
                 int groups = 1;
                 switch(e.Key)
                 {
-                    case Layer.Silkscreen:
+                    case PCBLayer.Silkscreen:
                         sb.AppendLine("<g id='silkscreen'>");
                         break;
-                    case Layer.Copper0:
+                    case PCBLayer.Copper0:
                         sb.AppendLine("<g id='copper0'>");
                         break;
-                    case Layer.Copper1:
+                    case PCBLayer.Copper1:
                         sb.AppendLine("<g id='copper1'>");
                         break;
-                    case Layer.BothCopper:
+                    case PCBLayer.BothCopper:
                         groups = 2;
                         sb.AppendLine("<g id='copper0'><g id='copper1'>");
                         break;
@@ -80,12 +82,5 @@ namespace FritzingGenericChipMaker
         public bool OutermostPinDiffDepth { get; set; }
         public float OutermostPinDepth { get; set; }
         public float PinOverlength { get; set; }*/
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void RaisePropertyChangedEvent(object sender, PropertyChangedEventArgs args)
-        {
-            PropertyChanged?.Invoke(sender, args);
-        }
     }
 }
