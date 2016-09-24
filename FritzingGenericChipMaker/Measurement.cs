@@ -45,11 +45,11 @@ namespace FritzingGenericChipMaker
         {
             if(IsMM)
             {
-                return Millimeters.ToString(SVGElement.doubleFormat) + "mm";
+                return Millimeters.ToString(Formatter.doubleFormat) + "mm";
             }
             else
             {
-                return Inches.ToString(SVGElement.doubleFormat) + "in";
+                return Inches.ToString(Formatter.doubleFormat) + "in";
             }
         }
     }

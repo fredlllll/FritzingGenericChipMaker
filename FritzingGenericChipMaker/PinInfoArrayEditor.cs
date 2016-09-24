@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class PinInfo
+    public class PinInfoArrayEditor : UITypeEditor
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ConnectorType ConnectorType { get; set; }
     }
 }

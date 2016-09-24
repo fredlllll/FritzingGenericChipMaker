@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class SVGCircle : SVGElement
+    public class SVGCircle : XMLElement
     {
-        public double CenterX { get; set; }
-        public double CenterY { get; set; }
-        public double Diameter { get; set; } = 2.54;
-        public Color StrokeColor { get; set; } = Color.FromArgb(255, 191, 0);
-        public double StrokeWidth { get; set; } = 0.5;
+        public XMLAttribute<double> CenterX { get; } = new XMLAttribute<double>("cx", 0);
+        public XMLAttribute<double> CenterY { get; } = new XMLAttribute<double>("cy", 0);
+        public XMLAttribute<double> Radius { get; } = new XMLAttribute<double>("r", 1.27);
+        public XMLAttribute<Color> FillColor { get; } = new XMLAttribute<Color>("fill", Color.Transparent);
+        public XMLAttribute<Color> StrokeColor { get; } = new XMLAttribute<Color>("stroke", Color.Transparent);
+        public XMLAttribute<double> StrokeWidth { get; } = new XMLAttribute<double>("stroke-width", 0);
 
-        public override string Emit()
+        public SVGCircle() : base("circle")
         {
-            string cx = Format(CenterX);
-            string cy = Format(CenterY);
-            string r = Format(Diameter / 2);
-            string color = Format(StrokeColor);
-            string strokeWidth = Format(StrokeWidth);
-            return string.Format("<circle fill=\"none\" cx=\"{0}\" cy=\"{1}\" stroke=\"rgb({2})\" id=\"{3}\" r=\"{4}\" stroke-width=\"{5}\"/>",
-                cx, cy, color, ID, r, strokeWidth);
+            Attributes.Add(CenterX);
+            Attributes.Add(CenterY);
+            Attributes.Add(Radius);
+            Attributes.Add(FillColor);
+            Attributes.Add(StrokeColor);
+            Attributes.Add(StrokeWidth);
         }
     }
 }

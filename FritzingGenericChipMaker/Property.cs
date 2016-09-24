@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class PinInfo
+    public class Property
     {
         public string Name { get; set; }
-        public string Description { get; set; }
-        public ConnectorType ConnectorType { get; set; }
+        public string Value { get; set; }
+
+        public Property(string name = "", string value = "")
+        {
+            Name = name;
+            Value = value;
+        }
     }
 }

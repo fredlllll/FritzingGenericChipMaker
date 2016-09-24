@@ -52,10 +52,30 @@ namespace FritzingGenericChipMaker
 
                 ChipInfo currentChip = (ChipInfo)propertyGrid1.SelectedObject;
 
+                using(FileStream fs = new FileStream(file.FullName, FileMode.Create))
+                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(currentChip.GetFZPXML(file.FullName));
+                }
                 using(FileStream fs = new FileStream(pcb.FullName, FileMode.Create))
                 using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
                 {
                     sw.Write(currentChip.GetPCBSVG());
+                }
+                using(FileStream fs = new FileStream(schematic.FullName, FileMode.Create))
+                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(currentChip.GetSchematicSVG());
+                }
+                using(FileStream fs = new FileStream(breadboard.FullName, FileMode.Create))
+                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(currentChip.GetBreadboardSVG());
+                }
+                using(FileStream fs = new FileStream(icon.FullName, FileMode.Create))
+                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(currentChip.GetIconSVG());
                 }
             }
         }
