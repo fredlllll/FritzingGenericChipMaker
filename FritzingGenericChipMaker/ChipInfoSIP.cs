@@ -24,11 +24,19 @@ namespace FritzingGenericChipMaker
         public Measurement Schematic_TextIndentation { get; set; } = new Measurement(1);
         public Measurement Schematic_FontSize { get; set; } = new Measurement(3);
 
+        public Measurement Breadboard_PinSpacing { get; set; } = new Measurement(5);
+        public Measurement Breadboard_PinLength { get; set; } = new Measurement(3);
+        public Measurement Breadboard_PinWidth { get; set; } = new Measurement(1);
+        public Measurement Breadboard_ChipHeight { get; set; } = new Measurement(5);
+        public Measurement Breadboard_TerminalWidth { get; set; } = new Measurement(1);
+        public Measurement Breadboard_TerminalHeight { get; set; } = new Measurement(1);
+
+
         public ChipInfoSIP()
         {
             for(int i = 0; i < 5; i++)
             {
-                Pins.Add(new PinInfo());
+                Pins.Add(new PinInfo() { Name = "pin " + i });
             }
             ChipName = "SIP Chip";
         }
@@ -51,12 +59,12 @@ namespace FritzingGenericChipMaker
 
         public override double CalculateBreadboardSketchX()
         {
-            throw new NotImplementedException();
+            return Pins.Count * Breadboard_PinSpacing.Millimeters;
         }
 
         public override double CalculateIconSketchX()
         {
-            throw new NotImplementedException();
+            return CalculateBreadboardSketchX();
         }
 
         public override double CalculatePCBSketchY()
@@ -71,12 +79,12 @@ namespace FritzingGenericChipMaker
 
         public override double CalculateBreadboardSketchY()
         {
-            throw new NotImplementedException();
+            return Breadboard_ChipHeight.Millimeters + Breadboard_PinLength.Millimeters;
         }
 
         public override double CalculateIconSketchY()
         {
-            throw new NotImplementedException();
+            return CalculateBreadboardSketchY();
         }
 
         public override Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements()
@@ -204,12 +212,45 @@ namespace FritzingGenericChipMaker
 
         public override List<XMLElement> getBreadboardSVGElements()
         {
-            throw new NotImplementedException();
+            List<XMLElement> elements = new List<XMLElement>();
+            double w = CalculateBreadboardSketchX();
+            double h = CalculateBreadboardSketchY();
+
+            var rect = new SVGRect();
+            rect.X.Value = 0;
+            rect.Y.Value = 0;
+            rect.Width.Value = w;
+            rect.Height.Value = Breadboard_ChipHeight.Millimeters;
+            rect.FillColor.Value = chipBlackColor;
+            elements.Add(rect);
+
+            double x = Breadboard_PinSpacing.Millimeters / 2 - Breadboard_PinWidth.Millimeters / 2;
+            for(int i = 0; i < Pins.Count; i++, x += Breadboard_PinSpacing.Millimeters)
+            {
+                rect = new SVGRect();
+                rect.X.Value = x - Breadboard_PinWidth.Millimeters / 2;
+                rect.Y.Value = Breadboard_ChipHeight.Millimeters;
+                rect.Width.Value = Breadboard_PinWidth.Millimeters;
+                rect.Height.Value = Breadboard_PinLength.Millimeters;
+                rect.FillColor.Value = pinGrayColor;
+                rect.ID.Value = "connector-pin-" + i;
+                elements.Add(rect);
+                rect = new SVGRect();
+                rect.X.Value = x - Breadboard_TerminalWidth.Millimeters / 2;
+                rect.Y.Value = h - Breadboard_TerminalHeight.Millimeters / 2;
+                rect.Width.Value = Breadboard_TerminalWidth.Millimeters;
+                rect.Height.Value = Breadboard_TerminalHeight.Millimeters;
+                rect.FillColor.Value = pinGrayColor;
+                rect.ID.Value = "connector-terminal-" + i;
+                elements.Add(rect);
+            }
+
+            return elements;
         }
 
         public override List<XMLElement> getIconSVGElements()
         {
-            throw new NotImplementedException();
+            return getBreadboardSVGElements();
         }
     }
 }

@@ -13,11 +13,12 @@ namespace FritzingGenericChipMaker
 {
     public partial class Form1 : Form
     {
-        Dictionary<string, object> chips = new Dictionary<string, object>();
+        Dictionary<string, ChipInfo> chips = new Dictionary<string, ChipInfo>();
 
         public Form1()
         {
             chips["SIP"] = new ChipInfoSIP();
+            chips["QFN"] = new ChipInfoQFN();
 
             InitializeComponent();
 

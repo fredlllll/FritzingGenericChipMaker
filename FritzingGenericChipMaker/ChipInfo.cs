@@ -30,7 +30,7 @@ namespace FritzingGenericChipMaker
     {
         None,
         Silkscreen,
-        Copper0,
+        Copper0,//todo determine copper top and copper botton instead of 0 and 1
         Copper1,
         BothCopper,
     }
@@ -38,6 +38,8 @@ namespace FritzingGenericChipMaker
     public abstract class ChipInfo
     {
         public static readonly Color copperColor = Color.FromArgb(255, 191, 0);
+        public static readonly Color pinGrayColor = Color.FromArgb(140, 140, 140);
+        public static readonly Color chipBlackColor = Color.FromArgb(20, 20, 20);
 
         [Editor(typeof(PinCollectionEditor), typeof(UITypeEditor))]
         public List<PinInfo> Pins { get; set; } = new List<PinInfo>();
@@ -199,7 +201,6 @@ namespace FritzingGenericChipMaker
 
             foreach(var e in elements)
             {
-                int groups = 1;
                 switch(e.Key)
                 {
                     case PCBLayer.Silkscreen:
@@ -212,16 +213,22 @@ namespace FritzingGenericChipMaker
                         sb.AppendLine("<g id='copper1'>");
                         break;
                     case PCBLayer.BothCopper:
-                        groups = 2;
-                        sb.AppendLine("<g id='copper0'><g id='copper1'>");
+                        sb.AppendLine("<g id='copper0'>");
+                        sb.AppendLine("<g id='copper1'>");
                         break;
                 }
+
                 foreach(var se in e.Value)
                 {
                     sb.AppendLine(se.Emit());
                 }
 
-                for(int i = 0; i < groups; i++)
+                if(e.Key == PCBLayer.BothCopper)
+                {
+                    sb.AppendLine("</g>");
+                    sb.AppendLine("</g>");
+                }
+                else
                 {
                     sb.AppendLine("</g>");
                 }

@@ -73,7 +73,7 @@
             // 
             // sfd
             // 
-            this.sfd.Filter = "*.fzp|Fritzing Part(*.fzp)";
+            this.sfd.Filter = "Fritzing Part(*.fzp)|*.fzp";
             // 
             // Form1
             // 
