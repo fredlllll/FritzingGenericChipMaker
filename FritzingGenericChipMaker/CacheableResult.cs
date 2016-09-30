@@ -6,31 +6,35 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class CacheableResult<T, U>
+    public class CacheableResult<DEPENDENCYTYPE, RESULTTYPE>
     {
         bool first = true;
-        U cachedResult = default(U);
-        T lastCacheDependency = default(T);
+        RESULTTYPE cachedResult = default(RESULTTYPE);
+        DEPENDENCYTYPE lastCacheDependency = default(DEPENDENCYTYPE);
 
-        Func<T> GetCacheDependency;
-        Func<U> GetNewResult;
+        Func<DEPENDENCYTYPE> GetCacheDependency;
+        Func<RESULTTYPE> GetNewResult;
 
-        public CacheableResult(Func<T> getCacheDependency, Func<U> getNewResult)
+        public CacheableResult(Func<DEPENDENCYTYPE> getCacheDependency, Func<RESULTTYPE> getNewResult)
         {
             GetCacheDependency = getCacheDependency;
             GetNewResult = getNewResult;
         }
 
-        public U Get()
+        public RESULTTYPE Get()
         {
-            T cache = GetCacheDependency();
-            if(first || !EqualityComparer<T>.Default.Equals(lastCacheDependency, cache))
+            DEPENDENCYTYPE cache = GetCacheDependency();
+            if(first || !EqualityComparer<DEPENDENCYTYPE>.Default.Equals(lastCacheDependency, cache))
             {
                 first = false;
                 lastCacheDependency = cache;
                 cachedResult = GetNewResult();
             }
             return cachedResult;
+        }
+
+        public static implicit operator RESULTTYPE(CacheableResult<DEPENDENCYTYPE,RESULTTYPE> val) {
+            return val.Get();
         }
     }
 }

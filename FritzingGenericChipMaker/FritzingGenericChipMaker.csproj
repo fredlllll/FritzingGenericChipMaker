@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="CacheableResult.cs" />
     <Compile Include="ChipInfo.cs" />
+    <Compile Include="ChipInfo4Sided.cs" />
     <Compile Include="ChipInfoDIP.cs" />
     <Compile Include="ChipInfoQFN.cs" />
     <Compile Include="ChipInfoSIP.cs" />

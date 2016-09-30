@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class ChipInfoQFN : ChipInfo
+    public class ChipInfoQFN : ChipInfo4Sided
     {
         public Measurement PCB_PinSideClearance { get; set; } = new Measurement(0.54);
         public Measurement PCB_PinWidth { get; set; } = new Measurement(0.22);
@@ -31,7 +31,7 @@ namespace FritzingGenericChipMaker
             QFNSize = new CacheableResult<int, double>(() => { return this.Pins.Count; },
             () =>
             {
-                int pinsPerSide = GetQFNPinsPerSide();
+                int pinsPerSide = base.pinsPerSide.Get();
                 return this.PCB_PinWidth.Millimeters + (pinsPerSide - 1) * this.PCB_PinSpacing.Millimeters + 2 * this.PCB_PinSideClearance.Millimeters;
             }
             );
@@ -39,19 +39,9 @@ namespace FritzingGenericChipMaker
 
         }
 
-        int GetQFNPinsPerSide()
+        /*double GetPCBPinLength(int index)
         {
-            int pinsPerSide = Pins.Count / 4;
-            if(Pins.Count % 4 != 0)
-            {
-                pinsPerSide += 4;
-            }
-            return pinsPerSide;
-        }
-
-        double GetPinLength(int index)
-        {
-            int pinsPerSide = GetQFNPinsPerSide();
+            int pinsPerSide = base.pinsPerSide.Get();
             int i = index % pinsPerSide;//index on side
             double retval = 0;
             if(i == 0 || i == pinsPerSide - 1)//side pins
@@ -63,11 +53,11 @@ namespace FritzingGenericChipMaker
                 retval = PCB_PinLength.Millimeters;
             }
             return retval;
-        }
+        }*/
 
-        double GetPinX(int index)
+        double GetPCBPinX(int index)
         {
-            int pinsPerSide = GetQFNPinsPerSide();
+            int pinsPerSide = base.pinsPerSide.Get();
             int i = index % pinsPerSide;//index on side
             double width = QFNSize.Get();
             double retval = 0;
@@ -96,9 +86,9 @@ namespace FritzingGenericChipMaker
             return retval;
         }
 
-        double GetPinY(int index)
+        double GetPCBPinY(int index)
         {
-            int pinsPerSide = GetQFNPinsPerSide();
+            int pinsPerSide = base.pinsPerSide.Get();
             int i = index % pinsPerSide;//index on side
             double width = QFNSize.Get();
             double retval = 0;
@@ -127,9 +117,9 @@ namespace FritzingGenericChipMaker
             return retval;
         }
 
-        double GetPinWidth(int index)
+        double GetPCBPinWidth(int index)
         {
-            int pinsPerSide = GetQFNPinsPerSide();
+            int pinsPerSide = base.pinsPerSide.Get();
             int i = index % pinsPerSide;//index on side
             double retval = 0;
             switch(index / pinsPerSide)
@@ -153,9 +143,9 @@ namespace FritzingGenericChipMaker
             return retval;
         }
 
-        double GetPinHeight(int index)
+        double GetPCBPinHeight(int index)
         {
-            int pinsPerSide = GetQFNPinsPerSide();
+            int pinsPerSide = base.pinsPerSide.Get();
             int i = index % pinsPerSide;//index on side
             double retval = 0;
             switch(index / pinsPerSide)
@@ -177,26 +167,6 @@ namespace FritzingGenericChipMaker
                     break;
             }
             return retval;
-        }
-
-        public override double CalculateBreadboardSketchX()
-        {
-            return 0;
-        }
-
-        public override double CalculateBreadboardSketchY()
-        {
-            return 0;
-        }
-
-        public override double CalculateIconSketchX()
-        {
-            return CalculateBreadboardSketchX();
-        }
-
-        public override double CalculateIconSketchY()
-        {
-            return CalculateBreadboardSketchY();
         }
 
         public override double CalculatePCBSketchX()
@@ -207,30 +177,6 @@ namespace FritzingGenericChipMaker
         public override double CalculatePCBSketchY()
         {
             return CalculatePCBSketchX();//always quadratic
-        }
-
-        public override double CalculateSchematicSketchX()
-        {
-            return 0;
-        }
-
-        public override double CalculateSchematicSketchY()
-        {
-            return 0;
-        }
-
-        public override List<XMLElement> getBreadboardSVGElements()
-        {
-            List<XMLElement> elements = new List<XMLElement>();
-            double w = CalculateBreadboardSketchX();
-            double h = CalculateBreadboardSketchY();
-
-            return elements;
-        }
-
-        public override List<XMLElement> getIconSVGElements()
-        {
-            return getBreadboardSVGElements();
         }
 
         public override Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements()
@@ -291,25 +237,16 @@ namespace FritzingGenericChipMaker
             for(int i = 0; i < Pins.Count; i++)
             {
                 rect = new SVGRect();
-                rect.X.Value = GetPinX(i);
-                rect.Y.Value = GetPinY(i);
-                rect.Width.Value = GetPinWidth(i);
-                rect.Height.Value = GetPinHeight(i);
+                rect.X.Value = GetPCBPinX(i);
+                rect.Y.Value = GetPCBPinY(i);
+                rect.Width.Value = GetPCBPinWidth(i);
+                rect.Height.Value = GetPCBPinHeight(i);
                 rect.FillColor.Value = copperColor;
                 rect.ID.Value = "connector-pad-" + i;
                 copper.Add(rect);
             }
 
             return dict;
-        }
-
-        public override List<XMLElement> getSchematicSVGElements()
-        {
-            List<XMLElement> elements = new List<XMLElement>();
-            double w = CalculateSchematicSketchX();
-            double h = CalculateSchematicSketchY();
-
-            return elements;
         }
     }
 }
