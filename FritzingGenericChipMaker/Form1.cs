@@ -18,7 +18,10 @@ namespace FritzingGenericChipMaker
         public Form1()
         {
             chips["SIP"] = new ChipInfoSIP();
+            chips["DIP"] = new ChipInfoDIP();
+            chips["SOIC"] = new ChipInfoSOIC();
             chips["QFN"] = new ChipInfoQFN();
+            
 
             InitializeComponent();
 

@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class ChipInfoSIP : ChipInfo
+    public class ChipInfoSIP : ChipInfo, IChipInfoThroughhole
     {
         public Measurement PCB_OutlineWidth { get; set; } = new Measurement(0.05);
+        public Measurement PCB_HoleInnerDiameter { get; set; } = new Measurement(1);
+        public Measurement PCB_RingWidth { get; set; } = new Measurement(0.4);
+
         public Measurement PCB_PinSpacing { get; set; } = new Measurement(0.1, false);
-        public Measurement PCB_HoleDiameter { get; set; } = new Measurement(0.9);
-        public Measurement PCB_RingWidth { get; set; } = new Measurement(0.5);
 
         public Measurement Schematic_PinSpacing { get; set; } = new Measurement(5);
         public Measurement Schematic_PinLength { get; set; } = new Measurement(5);
@@ -31,7 +32,6 @@ namespace FritzingGenericChipMaker
         public Measurement Breadboard_TerminalWidth { get; set; } = new Measurement(1);
         public Measurement Breadboard_TerminalHeight { get; set; } = new Measurement(1);
 
-
         public ChipInfoSIP()
         {
             for(int i = 0; i < 5; i++)
@@ -43,7 +43,7 @@ namespace FritzingGenericChipMaker
 
         public override double CalculatePCBSketchX()
         {
-            return PCB_PinSpacing.Millimeters * (Pins.Count - 1) + PCB_HoleDiameter.Millimeters + PCB_RingWidth.Millimeters * 2;
+            return PCB_PinSpacing.Millimeters * (Pins.Count - 1) + PCB_HoleInnerDiameter.Millimeters + PCB_RingWidth.Millimeters * 2;
         }
 
         public override double CalculateSchematicSketchX()
@@ -69,7 +69,7 @@ namespace FritzingGenericChipMaker
 
         public override double CalculatePCBSketchY()
         {
-            return PCB_HoleDiameter.Millimeters + PCB_RingWidth.Millimeters * 2;
+            return PCB_HoleInnerDiameter.Millimeters + PCB_RingWidth.Millimeters * 2;
         }
 
         public override double CalculateSchematicSketchY()
@@ -136,7 +136,7 @@ namespace FritzingGenericChipMaker
             List<XMLElement> copper = new List<XMLElement>();
             dict[PCBLayer.BothCopper] = copper;
 
-            double d = PCB_HoleDiameter.Millimeters + PCB_RingWidth.Millimeters;
+            double d = PCB_HoleInnerDiameter.Millimeters + PCB_RingWidth.Millimeters;
             double x = (d + PCB_RingWidth.Millimeters) / 2; //so we get outer diameter we add another ringwidth
             double y = h / 2;
             double strokeWidth = PCB_RingWidth.Millimeters;

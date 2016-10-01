@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public abstract class ChipInfo4Sided : ChipInfo
+    public abstract class ChipInfo2Sided : ChipInfo
     {
         public Measurement Schematic_PinSpacing { get; set; } = new Measurement(5);
         public Measurement Schematic_PinLength { get; set; } = new Measurement(5);
@@ -23,12 +23,12 @@ namespace FritzingGenericChipMaker
 
         protected CacheableResult<int, int> pinsPerSide = null;
 
-        public ChipInfo4Sided()
+        public ChipInfo2Sided()
         {
             pinsPerSide = new CacheableResult<int, int>(() => { return this.Pins.Count; }, () =>
             {
-                int pinsPerSide = Pins.Count / 4;
-                if(Pins.Count % 4 != 0)
+                int pinsPerSide = Pins.Count / 2;
+                if(Pins.Count % 2 != 0)
                 {
                     pinsPerSide += 1;
                 }
@@ -47,14 +47,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = 0;
                     break;
-                case 1://bottom
-                    retval = Breadboard_PinLength.Millimeters + i * Breadboard_PinSpacing.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - Breadboard_PinLength.Millimeters;
-                    break;
-                case 3://top;
-                    retval = size - (Breadboard_PinLength.Millimeters + Breadboard_PinWidth.Millimeters + i * Breadboard_PinSpacing.Millimeters);
                     break;
             }
             return retval;
@@ -71,14 +65,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = Breadboard_PinLength.Millimeters + i * Breadboard_PinSpacing.Millimeters;
                     break;
-                case 1://bottom
-                    retval = size - Breadboard_PinLength.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - (Breadboard_PinLength.Millimeters + Breadboard_PinWidth.Millimeters + i * Breadboard_PinSpacing.Millimeters);
-                    break;
-                case 3://top;
-                    retval = 0;
                     break;
             }
             return retval;
@@ -95,14 +83,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = 0;
                     break;
-                case 1://bottom
-                    retval = Breadboard_PinLength.Millimeters + Breadboard_PinWidth.Millimeters / 2 - Breadboard_TerminalSize.Millimeters / 2 + i * Breadboard_TerminalSize.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - Breadboard_TerminalSize.Millimeters;
-                    break;
-                case 3://top;
-                    retval = size - (Breadboard_PinLength.Millimeters + Breadboard_PinWidth.Millimeters / 2 + Breadboard_TerminalSize.Millimeters / 2 + i * Breadboard_TerminalSize.Millimeters);
                     break;
             }
             return retval;
@@ -119,14 +101,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = Breadboard_PinLength.Millimeters + Breadboard_PinWidth.Millimeters / 2 - Breadboard_TerminalSize.Millimeters / 2 + i * Breadboard_PinSpacing.Millimeters;
                     break;
-                case 1://bottom
-                    retval = size - Breadboard_PinLength.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - (Breadboard_PinLength.Millimeters + Breadboard_PinWidth.Millimeters / 2 + Breadboard_TerminalSize.Millimeters / 2 + i * Breadboard_PinSpacing.Millimeters);
-                    break;
-                case 3://top;
-                    retval = 0;
                     break;
             }
             return retval;
@@ -140,12 +116,8 @@ namespace FritzingGenericChipMaker
             switch(index / pps)
             {
                 case 0://left
-                case 2://right
+                case 1://right
                     retval = Breadboard_PinLength.Millimeters;
-                    break;
-                case 1://bottom
-                case 3://top;
-                    retval = Breadboard_PinWidth.Millimeters;
                     break;
             }
             return retval;
@@ -159,12 +131,8 @@ namespace FritzingGenericChipMaker
             switch(index / pps)
             {
                 case 0://left
-                case 2://right
+                case 1://right
                     retval = Breadboard_PinWidth.Millimeters;
-                    break;
-                case 1://bottom
-                case 3://top;
-                    retval = Breadboard_PinLength.Millimeters;
                     break;
             }
             return retval;
@@ -186,14 +154,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = 0;
                     break;
-                case 1://bottom
-                    retval = Schematic_PinLength.Millimeters + i * Schematic_PinSpacing.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - Schematic_PinLength.Millimeters;
-                    break;
-                case 3://top;
-                    retval = size - (Schematic_PinLength.Millimeters + Schematic_PinWidth.Millimeters + i * Schematic_PinSpacing.Millimeters);
                     break;
             }
             return retval;
@@ -210,14 +172,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = Schematic_PinLength.Millimeters + i * Schematic_PinSpacing.Millimeters;
                     break;
-                case 1://bottom
-                    retval = size - Schematic_PinLength.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - (Schematic_PinLength.Millimeters + Schematic_PinWidth.Millimeters + i * Schematic_PinSpacing.Millimeters);
-                    break;
-                case 3://top;
-                    retval = 0;
                     break;
             }
             return retval;
@@ -234,14 +190,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = 0;
                     break;
-                case 1://bottom
-                    retval = Schematic_PinLength.Millimeters + Schematic_PinWidth.Millimeters / 2 - Schematic_TerminalSize.Millimeters / 2 + i * Schematic_TerminalSize.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - Schematic_TerminalSize.Millimeters;
-                    break;
-                case 3://top;
-                    retval = size - (Schematic_PinLength.Millimeters + Schematic_PinWidth.Millimeters / 2 + Schematic_TerminalSize.Millimeters / 2 + i * Schematic_TerminalSize.Millimeters);
                     break;
             }
             return retval;
@@ -258,14 +208,8 @@ namespace FritzingGenericChipMaker
                 case 0://left
                     retval = Schematic_PinLength.Millimeters + Schematic_PinWidth.Millimeters / 2 - Schematic_TerminalSize.Millimeters / 2 + i * Schematic_PinSpacing.Millimeters;
                     break;
-                case 1://bottom
-                    retval = size - Schematic_PinLength.Millimeters;
-                    break;
-                case 2://right
+                case 1://right
                     retval = size - (Schematic_PinLength.Millimeters + Schematic_PinWidth.Millimeters / 2 + Schematic_TerminalSize.Millimeters / 2 + i * Schematic_PinSpacing.Millimeters);
-                    break;
-                case 3://top;
-                    retval = 0;
                     break;
             }
             return retval;
@@ -279,12 +223,8 @@ namespace FritzingGenericChipMaker
             switch(index / pps)
             {
                 case 0://left
-                case 2://right
+                case 1://right
                     retval = Schematic_PinLength.Millimeters;
-                    break;
-                case 1://bottom
-                case 3://top;
-                    retval = Schematic_PinWidth.Millimeters;
                     break;
             }
             return retval;
@@ -298,12 +238,8 @@ namespace FritzingGenericChipMaker
             switch(index / pps)
             {
                 case 0://left
-                case 2://right
+                case 1://right
                     retval = Schematic_PinWidth.Millimeters;
-                    break;
-                case 1://bottom
-                case 3://top;
-                    retval = Schematic_PinLength.Millimeters;
                     break;
             }
             return retval;
@@ -311,7 +247,7 @@ namespace FritzingGenericChipMaker
 
         public override double CalculateBreadboardSketchX()
         {
-            return Breadboard_PinLength.Millimeters * 2 + Breadboard_PinSpacing.Millimeters * (pinsPerSide.Get()-1) + Breadboard_PinWidth.Millimeters;
+            return Breadboard_PinLength.Millimeters * 2 + Breadboard_PinSpacing.Millimeters * (pinsPerSide.Get() - 1) + Breadboard_PinWidth.Millimeters;
         }
 
         public override double CalculateBreadboardSketchY()
