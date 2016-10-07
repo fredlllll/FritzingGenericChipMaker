@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{267C9166-736C-4A05-8C43-19DFB02BDA38}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FritzingGenericChipMaker</RootNamespace>
     <AssemblyName>FritzingGenericChipMaker</AssemblyName>
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,6 +57,8 @@
     <Compile Include="ChipInfoDIP.cs" />
     <Compile Include="ChipInfoQFN.cs" />
     <Compile Include="ChipInfoSIP.cs" />
+    <Compile Include="ChipInfoSMDPCB2Sided.cs" />
+    <Compile Include="ChipInfoSMDPCB3Sided.cs" />
     <Compile Include="IChipInfoSMD.cs" />
     <Compile Include="IChipInfoThroughhole.cs" />
     <Compile Include="Form1.cs">

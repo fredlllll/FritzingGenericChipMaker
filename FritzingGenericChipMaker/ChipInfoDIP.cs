@@ -9,7 +9,6 @@ namespace FritzingGenericChipMaker
 {
     public class ChipInfoDIP : ChipInfo2Sided, IChipInfoThroughhole
     {
-        public Measurement PCB_OutlineWidth { get; set; } = new Measurement(0.05);
         public Measurement PCB_HoleInnerDiameter { get; set; } = new Measurement(1);
         public Measurement PCB_RingWidth { get; set; } = new Measurement(0.4);
 
@@ -82,14 +81,7 @@ namespace FritzingGenericChipMaker
             List<XMLElement> silkscreen = new List<XMLElement>();
             dict[PCBLayer.Silkscreen] = silkscreen;
 
-            SVGRect rect = new SVGRect();
-            rect.Width.Value = w - PCB_OutlineWidth.Millimeters;
-            rect.Height.Value = h - PCB_OutlineWidth.Millimeters;
-            rect.X.Value = PCB_OutlineWidth.Millimeters / 2;
-            rect.Y.Value = PCB_OutlineWidth.Millimeters / 2;
-            rect.StrokeColor.Value = Color.White;
-            rect.StrokeWidth.Value = PCB_OutlineWidth.Millimeters;
-            silkscreen.Add(rect);
+            silkscreen.Add(GetPCBChipOutline());
 
             SVGCircle circle = new SVGCircle();
             circle.CenterX.Value = GetPCBPinX(0);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class PinInfoArrayEditor : UITypeEditor
+   /* public class PinInfoArrayEditor : UITypeEditor
     {
-    }
+    }*/
 }

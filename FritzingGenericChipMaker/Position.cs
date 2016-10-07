@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class Position
+    /*public class Position
     {
         public double X, Y;
-    }
+    }*/
 }

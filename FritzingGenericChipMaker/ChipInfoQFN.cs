@@ -14,7 +14,6 @@ namespace FritzingGenericChipMaker
         public Measurement PCB_PinSpacing { get; set; } = new Measurement(0.45);
         public Measurement PCB_PinLength { get; set; } = new Measurement(0.4);
         public Measurement PCB_OuterPinLength { get; set; } = new Measurement(0.28);//outer pins are often shorter
-        public Measurement PCB_OutlineWidth { get; set; } = new Measurement(0.05);
         public Measurement PCB_ThermalPadSize { get; set; } = new Measurement(2.4);
 
         CacheableResult<int, double> QFNSize;
@@ -190,39 +189,7 @@ namespace FritzingGenericChipMaker
             List<XMLElement> silkscreen = new List<XMLElement>();
             dict[PCBLayer.Silkscreen] = silkscreen;
 
-            SVGLine line = new SVGLine(); //bottom;
-            double halfLineWidth = PCB_OutlineWidth.Millimeters / 2;
-            line.X1.Value = halfLineWidth;
-            line.Y1.Value = h - halfLineWidth;
-            line.X2.Value = w - halfLineWidth;
-            line.Y2.Value = line.Y1.Value;
-            line.StrokeColor.Value = Color.White;
-            line.StrokeWidth.Value = PCB_OutlineWidth.Millimeters;
-            silkscreen.Add(line);
-            line = new SVGLine(); //top
-            line.X1.Value = halfLineWidth;
-            line.Y1.Value = halfLineWidth;
-            line.X2.Value = w - halfLineWidth;
-            line.Y2.Value = halfLineWidth;
-            line.StrokeColor.Value = Color.White;
-            line.StrokeWidth.Value = PCB_OutlineWidth.Millimeters;
-            silkscreen.Add(line);
-            line = new SVGLine(); //left
-            line.X1.Value = halfLineWidth;
-            line.Y1.Value = halfLineWidth;
-            line.X2.Value = halfLineWidth;
-            line.Y2.Value = h - halfLineWidth;
-            line.StrokeColor.Value = Color.White;
-            line.StrokeWidth.Value = PCB_OutlineWidth.Millimeters;
-            silkscreen.Add(line);
-            line = new SVGLine(); //right
-            line.X1.Value = w - halfLineWidth;
-            line.Y1.Value = halfLineWidth;
-            line.X2.Value = line.X1.Value;
-            line.Y2.Value = h - halfLineWidth;
-            line.StrokeColor.Value = Color.White;
-            line.StrokeWidth.Value = PCB_OutlineWidth.Millimeters;
-            silkscreen.Add(line);
+            silkscreen.Add(GetPCBChipOutline());
 
             //copperlayers
             List<XMLElement> copper = new List<XMLElement>();

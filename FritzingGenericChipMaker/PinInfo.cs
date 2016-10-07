@@ -8,8 +8,8 @@ namespace FritzingGenericChipMaker
 {
     public class PinInfo
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ConnectorType ConnectorType { get; set; }
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public ConnectorType ConnectorType { get; set; } = ConnectorType.male;
     }
 }

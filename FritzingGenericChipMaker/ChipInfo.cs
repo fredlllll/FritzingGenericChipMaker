@@ -54,6 +54,8 @@ namespace FritzingGenericChipMaker
         public List<string> Tags { get; set; } = new List<string>();
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
 
+        public Measurement PCB_OutlineWidth { get; set; } = new Measurement(0.05);
+
         public ChipInfo()
         {
             Properties["package"] = "";
@@ -305,15 +307,19 @@ namespace FritzingGenericChipMaker
             return sb.ToString();
         }
 
-        /*public bool ThermalPad { get; set; }
-        public float ThermalPadSize { get; set; }
-
-
-        public float PinInset { get; set; }
-        public float PinWidth { get; set; }
-        public float PinDepth { get; set; }
-        public bool OutermostPinDiffDepth { get; set; }
-        public float OutermostPinDepth { get; set; }
-        public float PinOverlength { get; set; }*/
+        public virtual SVGRect GetPCBChipOutline()
+        {
+            double outlineWidth = PCB_OutlineWidth.Millimeters;
+            SVGRect rect = new SVGRect();
+            double w = CalculatePCBSketchX();
+            double h = CalculatePCBSketchY();
+            rect.Width.Value = w - outlineWidth;
+            rect.Height.Value = h - outlineWidth;
+            rect.X.Value = outlineWidth / 2;
+            rect.Y.Value = outlineWidth / 2;
+            rect.StrokeColor.Value = Color.White;
+            rect.StrokeWidth.Value = outlineWidth;
+            return rect;
+        }
     }
 }

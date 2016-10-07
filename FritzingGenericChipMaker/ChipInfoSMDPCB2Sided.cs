@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class ChipInfoSOIC : ChipInfo2Sided, IChipInfoSMD
+    class ChipInfoSMDPCB2Sided : ChipInfo2Sided
     {
-        public Measurement PCB_PinSpacing { get; set; } = new Measurement(1.27);
-        public Measurement PCB_PinRowSpacing { get; set; } = new Measurement(3.9);
-        public Measurement PCB_PinSideClearance { get; set; } = new Measurement(0.5);
-        public Measurement PCB_PinWidth { get; set; } = new Measurement(0.43);
-        public Measurement PCB_PinLength { get; set; } = new Measurement(1.05);
+        public Measurement PCB_BoardWidth { get; set; } = new Measurement(19.7);
+        public Measurement PCB_BoardHeight { get; set; } = new Measurement(16);
 
-        public ChipInfoSOIC()
+        public Measurement PCB_PadSideClearance { get; set; } = new Measurement(0.4);
+        public Measurement PCB_PadSpacing { get; set; } = new Measurement(2);
+        public Measurement PCB_PadWidth { get; set; } = new Measurement(1.2);
+        public Measurement PCB_PadDepth { get; set; } = new Measurement(2);
+        public Measurement PCB_PadOvershoot { get; set; } = new Measurement(0.25);
+
+        public ChipInfoSMDPCB2Sided()
         {
-            for(int i = 0; i < 14; i++)
+            for(int i = 0; i < 16; i++)
             {
                 PinInfo pi = new PinInfo();
                 pi.Name = "pin " + i;
@@ -27,17 +29,19 @@ namespace FritzingGenericChipMaker
 
         public override double CalculatePCBSketchX()
         {
-            return PCB_PinRowSpacing.Millimeters + PCB_PinLength.Millimeters;
+            return PCB_BoardWidth.Millimeters + 2 * PCB_PadOvershoot.Millimeters;
         }
 
         public override double CalculatePCBSketchY()
         {
-            return PCB_PinSideClearance.Millimeters * 2 + PCB_PinSpacing.Millimeters * (pinsPerSide.Get() - 1) + PCB_PinWidth.Millimeters;
+            return PCB_BoardHeight.Millimeters;
         }
 
         double GetPCBPinX(int index)
         {
             int pps = pinsPerSide.Get();
+            int i = index % pps;//index on side
+            double size = CalculatePCBSketchX();
             double retval = 0;
             switch(index / pps)
             {
@@ -45,7 +49,7 @@ namespace FritzingGenericChipMaker
                     retval = 0;
                     break;
                 case 1://right
-                    retval = CalculatePCBSketchX() - PCB_PinLength.Millimeters;
+                    retval = size - PCB_PadOvershoot.Millimeters - PCB_PadDepth.Millimeters;
                     break;
             }
             return retval;
@@ -58,11 +62,11 @@ namespace FritzingGenericChipMaker
             double retval = 0;
             switch(index / pps)
             {
-                case 0://left;
-                    retval = PCB_PinSideClearance.Millimeters + PCB_PinSpacing.Millimeters * i;
+                case 0://left
+                    retval = PCB_PadSideClearance.Millimeters + PCB_PadSpacing.Millimeters * i;
                     break;
                 case 1://right
-                    retval = CalculatePCBSketchY() - PCB_PinSideClearance.Millimeters - PCB_PinWidth.Millimeters - PCB_PinSpacing.Millimeters * i;
+                    retval = CalculatePCBSketchY() - (PCB_PadSideClearance.Millimeters + PCB_PadWidth.Millimeters) - PCB_PadSpacing.Millimeters * i;
                     break;
             }
             return retval;
@@ -81,14 +85,6 @@ namespace FritzingGenericChipMaker
 
             silkscreen.Add(GetPCBChipOutline());
 
-            SVGCircle circle = new SVGCircle();
-            circle.CenterX.Value = GetPCBPinX(0) + PCB_PinLength.Millimeters + 1;
-            circle.CenterY.Value = GetPCBPinY(0) + PCB_PinWidth.Millimeters / 2;
-            circle.Radius.Value = 1;
-            circle.FillColor.Value = Color.White;
-            silkscreen.Add(circle);
-
-
             //copperlayers
             List<XMLElement> copper = new List<XMLElement>();
             dict[PCBLayer.BothCopper] = copper;
@@ -98,8 +94,8 @@ namespace FritzingGenericChipMaker
                 SVGRect rect = new SVGRect();
                 rect.X.Value = GetPCBPinX(i);
                 rect.Y.Value = GetPCBPinY(i);
-                rect.Width.Value = PCB_PinLength.Millimeters;
-                rect.Height.Value = PCB_PinWidth.Millimeters;
+                rect.Width.Value = PCB_PadDepth.Millimeters + PCB_PadOvershoot.Millimeters;
+                rect.Height.Value = PCB_PadWidth.Millimeters;
                 rect.FillColor.Value = copperColor;
                 rect.ID.Value = "connector-pad-" + i;
                 copper.Add(rect);

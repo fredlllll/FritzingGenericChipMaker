@@ -21,7 +21,8 @@ namespace FritzingGenericChipMaker
             chips["DIP"] = new ChipInfoDIP();
             chips["SOIC"] = new ChipInfoSOIC();
             chips["QFN"] = new ChipInfoQFN();
-            
+            chips["SMD PCB 3 Sides"] = new ChipInfoSMDPCB3Sided();
+            chips["SMD PCB 2 Sides"] = new ChipInfoSMDPCB2Sided();
 
             InitializeComponent();
 
