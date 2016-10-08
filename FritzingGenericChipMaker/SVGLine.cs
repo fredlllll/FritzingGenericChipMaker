@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class SVGLine : XMLElement
+    public class SVGLine : SVGElement
     {
         public XMLAttribute<double> X1 { get; } = new XMLAttribute<double>("x1", 0);
         public XMLAttribute<double> Y1 { get; } = new XMLAttribute<double>("y1", 0);

@@ -73,10 +73,10 @@ namespace FritzingGenericChipMaker
         public abstract double CalculateBreadboardSketchY();
         public abstract double CalculateIconSketchY();
 
-        public abstract Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements();
-        public abstract List<XMLElement> getSchematicSVGElements();
-        public abstract List<XMLElement> getBreadboardSVGElements();
-        public abstract List<XMLElement> getIconSVGElements();
+        public abstract Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements();
+        public abstract List<SVGElement> getSchematicSVGElements();
+        public abstract List<SVGElement> getBreadboardSVGElements();
+        public abstract List<SVGElement> getIconSVGElements();
 
         public string GetFZPXML(string filename)
         {

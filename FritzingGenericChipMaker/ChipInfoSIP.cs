@@ -86,21 +86,21 @@ namespace FritzingGenericChipMaker
             return CalculateBreadboardSketchY();
         }
 
-        public override Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements()
+        public override Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements()
         {
-            Dictionary<PCBLayer, List<XMLElement>> dict = new Dictionary<PCBLayer, List<XMLElement>>();
+           var dict = new Dictionary<PCBLayer, List<SVGElement>>();
 
             double w = CalculatePCBSketchX();
             double h = CalculatePCBSketchY();
 
             //silkscreen
-            List<XMLElement> silkscreen = new List<XMLElement>();
+            var silkscreen = new List<SVGElement>();
             dict[PCBLayer.Silkscreen] = silkscreen;
 
             silkscreen.Add(GetPCBChipOutline());
 
             //copperlayers
-            List<XMLElement> copper = new List<XMLElement>();
+            var copper = new List<SVGElement>();
             dict[PCBLayer.BothCopper] = copper;
 
             double d = PCB_HoleInnerDiameter.Millimeters + PCB_RingWidth.Millimeters;
@@ -122,9 +122,9 @@ namespace FritzingGenericChipMaker
             return dict;
         }
 
-        public override List<XMLElement> getSchematicSVGElements()
+        public override List<SVGElement> getSchematicSVGElements()
         {
-            List<XMLElement> elements = new List<XMLElement>();
+            var elements = new List<SVGElement>();
             double w = CalculateSchematicSketchX();
             double h = CalculateSchematicSketchY();
 
@@ -177,9 +177,9 @@ namespace FritzingGenericChipMaker
             return elements;
         }
 
-        public override List<XMLElement> getBreadboardSVGElements()
+        public override List<SVGElement> getBreadboardSVGElements()
         {
-            List<XMLElement> elements = new List<XMLElement>();
+            var elements = new List<SVGElement>();
             double w = CalculateBreadboardSketchX();
             double h = CalculateBreadboardSketchY();
 
@@ -215,7 +215,7 @@ namespace FritzingGenericChipMaker
             return elements;
         }
 
-        public override List<XMLElement> getIconSVGElements()
+        public override List<SVGElement> getIconSVGElements()
         {
             return getBreadboardSVGElements();
         }

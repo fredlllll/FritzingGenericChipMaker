@@ -275,9 +275,9 @@ namespace FritzingGenericChipMaker
             return CalculateSchematicSketchX();
         }
 
-        public override List<XMLElement> getBreadboardSVGElements()
+        public override List<SVGElement> getBreadboardSVGElements()
         {
-            List<XMLElement> elements = new List<XMLElement>();
+            var elements = new List<SVGElement>();
             double w = CalculateBreadboardSketchX();
             double h = CalculateBreadboardSketchY();
 
@@ -308,14 +308,14 @@ namespace FritzingGenericChipMaker
             return elements;
         }
 
-        public override List<XMLElement> getIconSVGElements()
+        public override List<SVGElement> getIconSVGElements()
         {
             return getBreadboardSVGElements();
         }
 
-        public override List<XMLElement> getSchematicSVGElements()
+        public override List<SVGElement> getSchematicSVGElements()
         {
-            List<XMLElement> elements = new List<XMLElement>();
+            var elements = new List<SVGElement>();
             double w = CalculateSchematicSketchX();
             double h = CalculateSchematicSketchY();
 

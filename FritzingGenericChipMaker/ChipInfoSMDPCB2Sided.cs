@@ -66,27 +66,27 @@ namespace FritzingGenericChipMaker
                     retval = PCB_PadSideClearance.Millimeters + PCB_PadSpacing.Millimeters * i;
                     break;
                 case 1://right
-                    retval = CalculatePCBSketchY() - (PCB_PadSideClearance.Millimeters + PCB_PadWidth.Millimeters) - PCB_PadSpacing.Millimeters * i;
+                    retval = CalculatePCBSketchY() - PCB_PadSideClearance.Millimeters - PCB_PadWidth.Millimeters - PCB_PadSpacing.Millimeters * i;
                     break;
             }
             return retval;
         }
 
-        public override Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements()
+        public override Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements()
         {
-            Dictionary<PCBLayer, List<XMLElement>> dict = new Dictionary<PCBLayer, List<XMLElement>>();
+            Dictionary<PCBLayer, List<SVGElement>> dict = new Dictionary<PCBLayer, List<SVGElement>>();
 
             double w = CalculatePCBSketchX();
             double h = CalculatePCBSketchY();
 
             //silkscreen
-            List<XMLElement> silkscreen = new List<XMLElement>();
+            List<SVGElement> silkscreen = new List<SVGElement>();
             dict[PCBLayer.Silkscreen] = silkscreen;
 
             silkscreen.Add(GetPCBChipOutline());
 
             //copperlayers
-            List<XMLElement> copper = new List<XMLElement>();
+            List<SVGElement> copper = new List<SVGElement>();
             dict[PCBLayer.BothCopper] = copper;
 
             for(int i = 0; i < Pins.Count; i++)

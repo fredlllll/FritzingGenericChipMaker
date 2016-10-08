@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class SVGCircle : XMLElement
+    public class SVGCircle : SVGElement
     {
         public XMLAttribute<double> CenterX { get; } = new XMLAttribute<double>("cx", 0);
         public XMLAttribute<double> CenterY { get; } = new XMLAttribute<double>("cy", 0);

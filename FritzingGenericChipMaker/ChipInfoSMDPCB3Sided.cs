@@ -11,18 +11,19 @@ namespace FritzingGenericChipMaker
         public Measurement PCB_BoardWidth { get; set; } = new Measurement(12.7);
         public Measurement PCB_BoardHeight { get; set; } = new Measurement(27);
 
-        public Measurement PCB_PadTopClearance { get; set; } = new Measurement(7.5);
-        public Measurement PCB_PadBottomClearance { get; set; } = new Measurement(1.75);
-        public Measurement PCB_PadSideClearance { get; set; } = new Measurement(1.25);
-        public Measurement PCB_PadSpacing { get; set; } = new Measurement(1.5);
+        public Measurement PCB_PadTopClearance { get; set; } = new Measurement(7);
+        public Measurement PCB_PadBottomClearance { get; set; } = new Measurement(1);
+        public Measurement PCB_PadSideClearance { get; set; } = new Measurement(0.6);
+        public Measurement PCB_PadSpacingSide { get; set; } = new Measurement(1.5);
+        public Measurement PCB_PadSpacingBottom { get; set; } = new Measurement(1.5);
         public Measurement PCB_PadWidth { get; set; } = new Measurement(1);
-        public Measurement PCB_PadDepth { get; set; } = new Measurement(1);
-        public Measurement PCB_PadOvershoot { get; set; } = new Measurement(0.1);
+        public Measurement PCB_PadDepth { get; set; } = new Measurement(0.5);
+        public Measurement PCB_PadOvershoot { get; set; } = new Measurement(0.8);
         public int PCB_BottomPadCount { get; set; } = 8;
 
         public ChipInfoSMDPCB3Sided()
         {
-            for(int i = 0; i < 32; i++)
+            for(int i = 0; i < 34; i++)
             {
                 var pin = new PinInfo();
                 pin.Name = "Pin " + i;
@@ -48,7 +49,7 @@ namespace FritzingGenericChipMaker
             if(index >= pinCountSide && index < pinCountSide + PCB_BottomPadCount)//bottom
             {
                 index -= pinCountSide;
-                retval = PCB_PadSideClearance.Millimeters + index * PCB_PadSpacing.Millimeters;
+                retval = PCB_PadOvershoot.Millimeters + PCB_PadSideClearance.Millimeters + index * PCB_PadSpacingBottom.Millimeters;
             }
             else if(index >= pinCountSide + PCB_BottomPadCount) //right
             {
@@ -73,11 +74,11 @@ namespace FritzingGenericChipMaker
             else if(index >= pinCountSide + PCB_BottomPadCount) //right
             {
                 index -= pinCountSide + PCB_BottomPadCount;
-                retval = size - PCB_PadBottomClearance.Millimeters - PCB_PadSpacing.Millimeters - (index * PCB_PadSpacing.Millimeters);
+                retval = size - PCB_PadOvershoot.Millimeters - PCB_PadBottomClearance.Millimeters - PCB_PadWidth.Millimeters - (index * PCB_PadSpacingSide.Millimeters);
             }
             else//left
             {
-                retval = PCB_PadTopClearance.Millimeters + index * PCB_PadSpacing.Millimeters;
+                retval = PCB_PadTopClearance.Millimeters + index * PCB_PadSpacingSide.Millimeters;
             }
             return retval;
         }
@@ -112,21 +113,21 @@ namespace FritzingGenericChipMaker
             return retval;
         }
 
-        public override Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements()
+        public override Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements()
         {
-            Dictionary<PCBLayer, List<XMLElement>> dict = new Dictionary<PCBLayer, List<XMLElement>>();
+            Dictionary<PCBLayer, List<SVGElement>> dict = new Dictionary<PCBLayer, List<SVGElement>>();
 
             double w = CalculatePCBSketchX();
             double h = CalculatePCBSketchY();
 
             //silkscreen
-            List<XMLElement> silkscreen = new List<XMLElement>();
+            List<SVGElement> silkscreen = new List<SVGElement>();
             dict[PCBLayer.Silkscreen] = silkscreen;
 
             silkscreen.Add(GetPCBChipOutline());
 
             //copperlayers
-            List<XMLElement> copper = new List<XMLElement>();
+            List<SVGElement> copper = new List<SVGElement>();
             dict[PCBLayer.BothCopper] = copper;
 
             for(int i = 0; i < Pins.Count; i++)

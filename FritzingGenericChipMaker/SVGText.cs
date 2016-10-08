@@ -16,7 +16,7 @@ namespace FritzingGenericChipMaker
         end
     }
 
-    public class SVGText : XMLElement
+    public class SVGText : SVGElement
     {
         public XMLAttribute<double> X { get; } = new XMLAttribute<double>("x", 0);
         public XMLAttribute<double> Y { get; } = new XMLAttribute<double>("y", 0);

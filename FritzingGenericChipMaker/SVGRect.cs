@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FritzingGenericChipMaker
 {
-    public class SVGRect : XMLElement
+    public class SVGRect : SVGElement
     {
         public XMLAttribute<double> X { get; } = new XMLAttribute<double>("x", 0);
         public XMLAttribute<double> Y { get; } = new XMLAttribute<double>("y", 0);

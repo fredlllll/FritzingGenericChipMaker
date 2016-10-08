@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FritzingGenericChipMaker
@@ -30,10 +29,19 @@ namespace FritzingGenericChipMaker
             {
                 cmbChipType.Items.Add(kv.Key);
             }
+            cmbChipType.SelectedIndex = 0;
+            //yes this is the sole reason i included System.Reactive into this project... :D .... :) .... :| ... okay i get rid of it
+            /*Observable.FromEventPattern<EventHandler, ComboBox, EventArgs>(
+                (ev) => cmbChipType.SelectedIndexChanged += ev,
+                (ev) => cmbChipType.SelectedIndexChanged -= ev).Subscribe((patt) =>
+                {
+                    button1.Enabled = patt.Sender.SelectedItem != null;
+                });*/
         }
 
         private void cmbChipType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            button1.Enabled = cmbChipType.SelectedItem != null;
             try
             {
                 propertyGrid1.SelectedObject = chips[(string)cmbChipType.SelectedItem];
@@ -48,40 +56,9 @@ namespace FritzingGenericChipMaker
         {
             if(propertyGrid1.SelectedObject != null && sfd.ShowDialog() == DialogResult.OK)
             {
-                FileInfo file = new FileInfo(sfd.FileName);
-                var filename = Path.GetFileNameWithoutExtension(file.Name);
-                FileInfo icon = new FileInfo(Path.Combine(Path.GetDirectoryName(file.FullName), filename + "_icon.svg"));
-                FileInfo breadboard = new FileInfo(Path.Combine(Path.GetDirectoryName(file.FullName), filename + "_breadboard.svg"));
-                FileInfo schematic = new FileInfo(Path.Combine(Path.GetDirectoryName(file.FullName), filename + "_schematic.svg"));
-                FileInfo pcb = new FileInfo(Path.Combine(Path.GetDirectoryName(file.FullName), filename + "_pcb.svg"));
-
+                FileInfo fzpz = new FileInfo(sfd.FileName);
                 ChipInfo currentChip = (ChipInfo)propertyGrid1.SelectedObject;
-
-                using(FileStream fs = new FileStream(file.FullName, FileMode.Create))
-                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    sw.Write(currentChip.GetFZPXML(file.FullName));
-                }
-                using(FileStream fs = new FileStream(pcb.FullName, FileMode.Create))
-                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    sw.Write(currentChip.GetPCBSVG());
-                }
-                using(FileStream fs = new FileStream(schematic.FullName, FileMode.Create))
-                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    sw.Write(currentChip.GetSchematicSVG());
-                }
-                using(FileStream fs = new FileStream(breadboard.FullName, FileMode.Create))
-                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    sw.Write(currentChip.GetBreadboardSVG());
-                }
-                using(FileStream fs = new FileStream(icon.FullName, FileMode.Create))
-                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    sw.Write(currentChip.GetIconSVG());
-                }
+                FritzingHelper.SaveChip(currentChip, fzpz);
             }
         }
     }

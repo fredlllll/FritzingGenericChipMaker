@@ -178,21 +178,21 @@ namespace FritzingGenericChipMaker
             return CalculatePCBSketchX();//always quadratic
         }
 
-        public override Dictionary<PCBLayer, List<XMLElement>> getPCBSVGElements()
+        public override Dictionary<PCBLayer, List<SVGElement>> getPCBSVGElements()
         {
-            Dictionary<PCBLayer, List<XMLElement>> dict = new Dictionary<PCBLayer, List<XMLElement>>();
+            var dict = new Dictionary<PCBLayer, List<SVGElement>>();
 
             double w = CalculatePCBSketchX();
             double h = CalculatePCBSketchY();
 
             //silkscreen
-            List<XMLElement> silkscreen = new List<XMLElement>();
+            var silkscreen = new List<SVGElement>();
             dict[PCBLayer.Silkscreen] = silkscreen;
 
             silkscreen.Add(GetPCBChipOutline());
 
             //copperlayers
-            List<XMLElement> copper = new List<XMLElement>();
+            var copper = new List<SVGElement>();
             dict[PCBLayer.Copper1] = copper;
 
             SVGRect rect = new SVGRect();
